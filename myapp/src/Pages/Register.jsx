@@ -14,7 +14,7 @@ const Register = () => {
 
     const handleSubmit = (e)=>{
         e.preventDefault()
-        axios.post("https://reacthostingtest.onrender.com/register", {name, email, password}, {withCredentials: true})
+        axios.post("http:localhost:3000/register", {name, email, password}, {withCredentials: true})
             .then((res)=>{
                 toast.success(res.data.message)
               })

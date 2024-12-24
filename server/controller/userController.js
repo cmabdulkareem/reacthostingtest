@@ -80,6 +80,7 @@ export const loginHandle = (req, res)=>{
                     if(!isMatch){
                         return res.status(403).json({error: "invalid password"})
                     }
+                    console.log(user)
                     req.session.userId = user._id
                     req.session.username = user.name
                     res.status(200).json({message: "Login successful"})

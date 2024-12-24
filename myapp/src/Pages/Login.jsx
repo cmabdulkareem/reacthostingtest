@@ -13,7 +13,7 @@ const Login = () => {
 
 
     useEffect(()=>{
-      axios.get("https://reacthostingtest.onrender.com/authchecking", {withCredentials: true})
+      axios.get("http:localhost:3000/authchecking", {withCredentials: true})
         .then((res)=>{
           if(!res.data.authenticated){
             navigate('/login')
@@ -28,7 +28,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post("https://reacthostingtest.onrender.com/login", { email, password }, { withCredentials: true })
+    axios.post("http:localhost:3000/login", { email, password }, { withCredentials: true })
       .then((res) => {
         toast.success(res.data.message)
         navigate('/dashboard')
