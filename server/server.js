@@ -4,7 +4,7 @@ import './config/db.js'
 import userRouter from "./routes/userRouter.js";
 import session from 'express-session'
 import cookieParser from "cookie-parser";
-import MongoStore from "connect-mongo";
+
 
 const app = express();
 const PORT = 3000;
@@ -20,18 +20,12 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 
-app.use(
-    session({
-      store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://cmakareem:Cadd123@sample.kvxwkea.mongodb.net/sessions', // Replace with your MongoDB URI
-        ttl: 14 * 24 * 60 * 60, // Time to live in seconds (14 days here)
-      }),
-      secret: 'yourSecretKey', // Replace with a strong secret
-      resave: false,
-      saveUninitialized: false,
-      cookie: { secure: false }, // Set secure to true in production with HTTPS
-    })
-  );
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {secure: false}
+}))
 
 
 app.use('/', userRouter)
