@@ -1,0 +1,12 @@
+.cardStyle{
+    border: violet solid 1px;
+    background-color: thistle;
+}
+
+.cardImageStyle{
+    max-height: 100px;
+}
+
+.btnStyle{
+    color: "red";
+}
