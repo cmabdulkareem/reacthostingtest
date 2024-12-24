@@ -10,7 +10,7 @@ function PrivateRoute({children}) {
   const navigate = useNavigate()
 
   useEffect(()=>{
-    axios.get("http://localhost:3000/authchecking", {withCredentials: true})
+    axios.get("https://reacthostingtest.onrender.com/authchecking", {withCredentials: true})
         .then((res)=>{
             setIsAuthenticated(res.data.authenticated)
             setLoading(false)
