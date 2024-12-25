@@ -17,11 +17,10 @@ function PrivateRoute({children}) {
         })
         .catch((err)=>{
             setIsAuthenticated(false)
-            setLoading(true)
+            setLoading(false)
         })
 }, [])
 
-axios.defaults.withCredentials = true
   
     if(loading){
         return <div>Loading... </div>

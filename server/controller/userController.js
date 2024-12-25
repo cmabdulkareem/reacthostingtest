@@ -12,22 +12,21 @@ let storedOtp = ''
 const secretKey = 'your_secret_key';
 
 export const authChecking = (req, res) => {
-    const token = req.cookies.token; // Retrieve the token from cookies
-    console.log(token)
-
-    if (!token) {
-        return res.status(200).json({ authenticated: false });
-    }
-    console.log('if token triggered')
-    
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            return res.status(200).json({ authenticated: false });
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+      
+        if (!token) {
+          return res.status(401).json({ message: 'Authorization token is required' });
         }
-
-        res.status(200).json({ authenticated: true, user: decoded.username });
-    });
-};
+      
+        try {
+          // Verify the token
+          const decoded = jwt.verify(token, SECRET_KEY);
+          req.user = decoded; // Attach user info to the request
+          res.status(200).json({authenticated: true})
+        } catch (error) {
+          return res.status(401).json({ message: 'Invalid or expired token' });
+        }
+      };
 
 export const registerHandler = (req, res) => {
     const {name, email, password} = req.body
