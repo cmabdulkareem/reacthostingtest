@@ -3,119 +3,112 @@ import bcrypt from 'bcryptjs'
 import { transporter } from "../config/nodemailConfig.js"
 import jwt from 'jsonwebtoken'
 
+
+let storedOtp = ''
 const generateOtp = ()=>{
     return Math.floor(Math.random() * 900000).toString()
 }
 
-let storedOtp = ''
-
 const secretKey = 'your_secret_key';
 
 export const authChecking = (req, res) => {
-    // Extract token from cookies
     const token = req.cookies.token;
-  
     if (!token) {
       return res.status(401).json({ message: 'Authorization token is required' });
     }
   
     try {
-      // Verify the token
       const decoded = jwt.verify(token, secretKey);
-      req.user = decoded; // Attach user info to the request
       res.status(200).json({ authenticated: true });
     } catch (error) {
       return res.status(401).json({ message: 'Invalid or expired token' });
     }
   };
 
-export const registerHandler = (req, res) => {
-    const {name, email, password} = req.body
 
-    User.findOne({email})
-        .then((existingUser)=>{
-            if(existingUser){
-                return res.status(403).json({error: "Email already exists"})
-            }
+  export const registerHandler = async (req, res) => {
+    const { name, email, password } = req.body;
 
-            const otp = generateOtp()
-            storedOtp = otp;
+    try {
+        // Check if the email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(403).json({ error: "Email already exists" });
+        }
 
-            const mailOptions = {
-                from: 'cmabdulkareem@gmail.com',
-                to: email,
-                subject: 'Approval request',
-                text: `Your OTP code is : ${otp}`,
-            }
+        // Generate OTP
+        const otp = generateOtp();
+        storedOtp = otp;
 
-            transporter.sendMail(mailOptions, (error, info)=>{
-                if(error){
-                    console.log('Error', error)
-                    return res.status(500).json({error: "Error sending email"})
+        // Mail options for sending OTP
+        const mailOptions = {
+            from: 'cmabdulkareem@gmail.com',
+            to: email,
+            subject: 'Approval request',
+            text: `Your OTP code is : ${otp}`,
+        };
+
+        // Send OTP email
+        await new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log('Error', error);
+                    reject(new Error("Error sending email"));
                 }
-                res.status(200).json({message: 'OTP send succesfully'})
-            })
+                resolve();
+            });
+        });
 
-            bcrypt.hash(password, 10)
-                .then((hashPassword)=>{
-                    User.create({ name, email, password: hashPassword})
-                        .then((newUser)=>{
-                            req.session.userId = newUser._id
-                            
-                            res.status(200).json({message: "User registration success"})
-                        })
-                        .catch((err)=>{
-                            res.status(500).json({error: "Internal server error"})
-                        })
-                })
-                .catch((err)=>{
-                    res.status(500).json({error: "Internal server error"})
-                })
-        })
+        // Hash the password
+        const hashPassword = await bcrypt.hash(password, 10);
 
-        .catch((err)=>{
-            res.status(500).json({error: "Internal server error"})
-        })
-}
+        // Create new user
+        const newUser = await User.create({ name, email, password: hashPassword });
+
+        // Set the session for the new user
+        req.session.userId = newUser._id;
+
+        return res.status(200).json({ message: "User registration success" });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
 
 
-export const loginHandle = (req, res) => {
+
+
+
+export const loginHandle = async (req, res) => {
     const { email, password } = req.body;
 
-    User.findOne({ email })
-        .then((user) => {
-            if (!user) {
-                return res.status(403).json({ error: "Invalid email" });
-            }
-            bcrypt.compare(password, user.password)
-                .then((isMatch) => {
-                    if (!isMatch) {
-                        return res.status(403).json({ error: "Invalid password" });
-                    }
+    try {
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(403).json({ error: "Invalid email" });
+        }
 
-                    const payload = {
-                        id: user._id,
-                        username: user.name,
-                        email: user.email,
-                    };
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.status(403).json({ error: "Invalid password" });
+        }
+            const payload = {
+                id: user._id,
+                username: user.name,
+                email: user.email,
+            };
 
-                    const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+        const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
 
-                    // Set the token in an HTTP-only cookie
-                    res.cookie('token', token, {
-                        httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-                        secure: true, // Use secure cookies in production
-                        sameSite: 'strict', // Protect against CSRF attacks
-                        maxAge: 3600000, // Cookie expires in 1 hour
-                    });
-
-                    return res.status(200).json({ message: "Login successful" });
-                })
-                .catch((err) => {
-                    res.status(500).json({ error: "Internal server error" });
-                });
-        })
-        .catch((err) => {
-            res.status(500).json({ error: "Invalid email provided" });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+            maxAge: 3600000,
         });
+
+        return res.status(200).json({ message: "Login successful" });
+    } catch (err) {
+        res.status(500).json({ error: "Internal server error" });
+    }
 };

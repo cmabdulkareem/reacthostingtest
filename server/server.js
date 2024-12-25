@@ -9,7 +9,7 @@ const app = express();
 const PORT = 3000;
 
 const corsOptions = {
-    origin : "https://reacthostingtest.vercel.app",
+    origin : "http://localhost:5173",
     methods : ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials : true,
     allowedHeaders: ["Content-Type", "Authorization"]
