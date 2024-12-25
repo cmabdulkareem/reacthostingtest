@@ -9,17 +9,30 @@ function PrivateRoute({children}) {
 
   const navigate = useNavigate()
 
-  useEffect(()=>{
-    axios.get("http://localhost:3000/authchecking", {withCredentials: true})
-        .then((res)=>{
-            setIsAuthenticated(res.data.authenticated)
-            setLoading(false)
+  useEffect(() => {
+    const token = localStorage.getItem('token');  // Get the token from localStorage
+    console.log(token)
+
+    if (token) {
+        axios.get('http://localhost:3000/authchecking', {
+            headers: {
+                Authorization: `Bearer ${token}`,  // Include the token in the Authorization header
+            },
+            withCredentials: true,  // To send cookies with the request if needed
         })
-        .catch((err)=>{
-            setIsAuthenticated(false)
-            setLoading(false)
+        .then((res) => {
+            setIsAuthenticated(res.data.authenticated);  // Assuming 'authenticated' is part of the response
+            setLoading(false);
         })
-}, [])
+        .catch((err) => {
+            setIsAuthenticated(false);  // If there is an error, assume the user is not authenticated
+            setLoading(false);
+        });
+    } else {
+        setIsAuthenticated(false);  // If there's no token, the user is not authenticated
+        setLoading(false);
+    }
+}, []);
 
 axios.defaults.withCredentials = true
   
