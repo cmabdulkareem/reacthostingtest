@@ -27,7 +27,7 @@ const Login = () => {
         })
     }, [])
 
-    axios.defaults.withCredentials = true
+    
 
   const handleSubmit = (e) => {
     e.preventDefault()

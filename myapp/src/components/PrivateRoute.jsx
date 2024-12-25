@@ -9,6 +9,8 @@ function PrivateRoute({children}) {
 
   const navigate = useNavigate()
 
+  axios.defaults.withCredentials = true
+
   useEffect(()=>{
     axios.get("http://localhost:3000/authchecking", {withCredentials: true})
         .then((res)=>{
