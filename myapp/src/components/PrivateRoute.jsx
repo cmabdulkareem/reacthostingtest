@@ -20,6 +20,8 @@ function PrivateRoute({children}) {
             setLoading(false)
         })
 }, [])
+
+axios.defaults.withCredentials = true
   
     if(loading){
         return <div>Loading... </div>

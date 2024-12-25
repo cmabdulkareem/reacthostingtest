@@ -12,7 +12,19 @@ let storedOtp = ''
 const secretKey = 'your_secret_key';
 
 export const authChecking = (req, res) => {
-    
+    const token = req.cookies.token; // Retrieve the token from cookies
+
+    if (!token) {
+        return res.status(200).json({ authenticated: false });
+    }
+
+    jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+            return res.status(200).json({ authenticated: false });
+        }
+
+        res.status(200).json({ authenticated: true, user: decoded.username });
+    });
 };
 
 export const registerHandler = (req, res) => {
