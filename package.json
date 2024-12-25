@@ -1,0 +1,17 @@
+{
+  "name": "react_practice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:myapp\" \"npm run start:server\"",
+    "start:myapp": "cd myapp && npm run dev",
+    "start:server": "cd server && nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
