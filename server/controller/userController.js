@@ -13,11 +13,13 @@ const secretKey = 'your_secret_key';
 
 export const authChecking = (req, res) => {
     const token = req.cookies.token; // Retrieve the token from cookies
+    console.log(token)
 
     if (!token) {
         return res.status(200).json({ authenticated: false });
     }
-
+    console.log('if token triggered')
+    
     jwt.verify(token, secretKey, (err, decoded) => {
         if (err) {
             return res.status(200).json({ authenticated: false });
