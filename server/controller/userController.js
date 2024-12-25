@@ -12,19 +12,7 @@ let storedOtp = ''
 const secretKey = 'your_secret_key';
 
 export const authChecking = (req, res) => {
-    const token = req.cookies.token; // Retrieve the token from cookies
-
-    if (!token) {
-        return res.status(200).json({ authenticated: false });
-    }
-
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            return res.status(200).json({ authenticated: false });
-        }
-
-        res.status(200).json({ authenticated: true, user: decoded.username });
-    });
+    
 };
 
 export const registerHandler = (req, res) => {
@@ -102,7 +90,7 @@ export const loginHandle = (req, res) => {
                     // Set the token in an HTTP-only cookie
                     res.cookie('token', token, {
                         httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-                        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+                        secure: true, // Use secure cookies in production
                         sameSite: 'strict', // Protect against CSRF attacks
                         maxAge: 3600000, // Cookie expires in 1 hour
                     });
