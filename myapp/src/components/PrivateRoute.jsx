@@ -4,6 +4,8 @@ import { Navigate, useNavigate } from 'react-router-dom'
 
 function PrivateRoute({children}) {
 
+    const API = import.meta.env.VITE_BACKEND_URL
+
     const [isAuthenticated, setIsAuthenticated] = useState(null)
     const [loading, setLoading] = useState(true)
 
@@ -12,7 +14,7 @@ function PrivateRoute({children}) {
   axios.defaults.withCredentials = true
 
   useEffect(()=>{
-    axios.get("http://localhost:3000/authchecking", {withCredentials: true})
+    axios.get(`${API}/authchecking`, {withCredentials: true})
         .then((res)=>{
             setIsAuthenticated(res.data.authenticated)
             setLoading(false)

@@ -7,12 +7,12 @@ function Products() {
   const [suggestions, setSuggestions] = useState([])
   const [sortOrder, setSortOrder] = useState("asc")
 
-
+  const API = import.meta.env.VITE_BACKEND_URL
 
 
 
   useEffect(()=>{
-    axios.get("http://localhost:3000/products")
+    axios.get(`${API}/products`)
       .then((res)=>{
         setProducts(res.data.message)
       })
@@ -47,7 +47,7 @@ function Products() {
   const handleDeleteItem = (id)=>{
     if(window.confirm("Are you sure to delete this item?"))
     {
-      axios.delete(`http://localhost:3000/delete-product/${id}`)
+      axios.delete(`${API}/delete-product/${id}`)
         .then((res)=>{
           setProducts(products.filter(product => product._id !== id))
         })
@@ -87,7 +87,7 @@ function Products() {
 
         {filteredProducts.length > 0 ? filteredProducts.map((product, index)=>(
           <div key={index} className="card mt-4" style={{width: "18rem"}} >
-            <img src={`http://localhost:3000/images/product-images/${product._id}.jpg`} className="card-img-top" alt="..." />
+            <img src={`${API}/images/product-images/${product._id}.jpg`} className="card-img-top" alt="..." />
             <div className="card-body">
               <h5 className="card-title">{product.itemName}</h5>
               <p className="card-text">{product.itemDesc}</p>

@@ -5,6 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 
 function Dashboard() {
 
+  const API = import.meta.env.VITE_BACKEND_URL
+
   const [name, setName] = useState("")
 
   const navigate = useNavigate()
@@ -13,7 +15,7 @@ function Dashboard() {
 
   const handleLogout = () => {
     axios
-      .get('http://localhost:3000/logoutHandler', {}, { withCredentials: true })
+      .get(`${API}/logoutHandler`, {}, { withCredentials: true })
       .then((res) => {
         toast.success(res.data.message);
         navigate('/login');

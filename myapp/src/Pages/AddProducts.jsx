@@ -4,6 +4,8 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function AddProducts() {
 
+    const API = import.meta.env.VITE_BACKEND_URL
+
     const [itemName, setItemName] = useState("")
     const [itemDesc, setItemDesc] = useState("")
     const [itemPrice, setItemPrice] = useState(0)
@@ -20,7 +22,7 @@ function AddProducts() {
             formData.append('itemImage', image)
         }
 
-        axios.post('http://localhost:3000/addProducts', formData, {
+        axios.post(`${API}/addProducts`, formData, {
             headers: {
                 'Content-Type' : 'multipart/form-data'
             }

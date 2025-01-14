@@ -5,6 +5,8 @@ import { ToastContainer, toast } from 'react-toastify';
 
 const Login = () => {
 
+  const API = import.meta.env.VITE_BACKEND_URL
+
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -14,7 +16,7 @@ const Login = () => {
     axios.defaults.withCredentials = true
 
     useEffect(()=>{
-      axios.get("http://localhost:3000/authchecking", {withCredentials: true})
+      axios.get(`${API}/authchecking`, {withCredentials: true})
         .then((res)=>{
           if(!res.data.authenticated){
             navigate('/login')
@@ -31,7 +33,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post("http://localhost:3000/login", { email, password }, { withCredentials: true })
+    axios.post(`${API}/login`, { email, password }, { withCredentials: true })
       .then((res) => {
         toast.success(res.data.message)
         navigate('/dashboard')

@@ -5,6 +5,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
+
+  const API = import.meta.env.VITE_BACKEND_URL
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +23,7 @@ const Register = () => {
 
     axios
       .post(
-        `http://localhost:3000/register`,
+        `${API}/register`,
         { name, email, password, otp },
         { withCredentials: true }
       )
@@ -46,7 +49,7 @@ const Register = () => {
     }
 
     axios
-      .post("http://localhost:3000/sendOtp", { email })
+      .post(`${API}/sendOtp`, { email })
       .then((res) => {
         toast.success(res.data.message);
         setIsOtpSent(true); 
